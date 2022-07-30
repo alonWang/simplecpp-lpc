@@ -230,7 +230,7 @@ void simplecpp::Token::printOut() const
 simplecpp::TokenList::TokenList(std::vector<std::string> &filenames) : frontToken(nullptr), backToken(nullptr), files(filenames) {}
 
 simplecpp::TokenList::TokenList(std::istream &istr, std::vector<std::string> &filenames, const std::string &filename, OutputList *outputList)
-    : frontToken(nullptr), backToken(nullptr), files(filenames)
+        : frontToken(nullptr), backToken(nullptr), files(filenames)
 {
     readfile(istr,filename,outputList);
 }
@@ -548,7 +548,7 @@ void simplecpp::TokenList::readfile(std::istream &istr, const std::string &filen
                     lineDirective(fileIndex(replaceAll(strtok->str().substr(1U, strtok->str().size() - 2U),"\\\\","\\")),
                                   std::atol(numtok->str().c_str()), &location);
                 }
-                // #endfile
+                    // #endfile
                 else if (lastline == "# endfile" && !loc.empty()) {
                     location = loc.top();
                     loc.pop();
@@ -591,7 +591,7 @@ void simplecpp::TokenList::readfile(std::istream &istr, const std::string &filen
             ungetChar(istr,bom);
         }
 
-        // comment
+            // comment
         else if (ch == '/' && peekChar(istr,bom) == '/') {
             while (istr.good() && ch != '\r' && ch != '\n') {
                 currentToken += ch;
@@ -608,7 +608,7 @@ void simplecpp::TokenList::readfile(std::istream &istr, const std::string &filen
             }
         }
 
-        // comment
+            // comment
         else if (ch == '/' && peekChar(istr,bom) == '*') {
             currentToken = "/*";
             (void)readChar(istr,bom);
@@ -635,7 +635,7 @@ void simplecpp::TokenList::readfile(std::istream &istr, const std::string &filen
             }
         }
 
-        // string / char literal
+            // string / char literal
         else if (ch == '\"' || ch == '\'') {
             std::string prefix;
             if (cback() && cback()->name && isStringLiteralPrefix(cback()->str()) &&
@@ -916,7 +916,7 @@ void simplecpp::TokenList::constFoldUnaryNotPosNeg(simplecpp::Token *tok)
         // "not" might be !
         if (isAlternativeUnaryOp(tok, NOT))
             tok->op = '!';
-        // "compl" might be ~
+            // "compl" might be ~
         else if (isAlternativeUnaryOp(tok, COMPL))
             tok->op = '~';
 
@@ -932,14 +932,14 @@ void simplecpp::TokenList::constFoldUnaryNotPosNeg(simplecpp::Token *tok)
             if (!tok->next || !tok->next->number)
                 continue;
             switch (tok->op) {
-            case '+':
-                tok->setstr(tok->next->str());
-                deleteToken(tok->next);
-                break;
-            case '-':
-                tok->setstr(tok->op + tok->next->str());
-                deleteToken(tok->next);
-                break;
+                case '+':
+                    tok->setstr(tok->next->str());
+                    deleteToken(tok->next);
+                    break;
+                case '-':
+                    tok->setstr(tok->op + tok->next->str());
+                    deleteToken(tok->next);
+                    break;
             }
         }
     }
@@ -1464,7 +1464,7 @@ namespace simplecpp {
             }
 
             invalidHashHash(const Location &loc, const std::string &macroName, const std::string &message)
-                : Error(loc, format(macroName, message)) { }
+                    : Error(loc, format(macroName, message)) { }
 
             static inline invalidHashHash unexpectedToken(const Location &loc, const std::string &macroName, const Token *tokenA) {
                 return invalidHashHash(loc, macroName, "Unexpected token '"+ tokenA->str()+"'");
@@ -2289,6 +2289,10 @@ namespace simplecpp {
     {
         if (path.empty())
             return path;
+        //remvoe the leading "/"
+        while (path[0] == '/') {
+            path.erase(0,1);
+        }
 
         std::string::size_type pos;
 
@@ -2433,11 +2437,11 @@ static void simplifyName(simplecpp::TokenList &expr)
  * throws if the above requirements were not possible to satisfy.
  */
 static unsigned long long stringToULLbounded(
-    const std::string& s,
-    std::size_t& pos,
-    int base = 0,
-    std::ptrdiff_t minlen = 1,
-    std::size_t maxlen = std::string::npos
+        const std::string& s,
+        std::size_t& pos,
+        int base = 0,
+        std::ptrdiff_t minlen = 1,
+        std::size_t maxlen = std::string::npos
 )
 {
     std::string sub = s.substr(pos, maxlen);
@@ -2522,83 +2526,83 @@ long long simplecpp::characterLiteralToLL(const std::string& str)
                 throw std::runtime_error("unexpected end of character literal");
 
             switch (escape) {
-            // obscure GCC extensions
-            case '%':
-            case '(':
-            case '[':
-            case '{':
-            // standard escape sequences
-            case '\'':
-            case '"':
-            case '?':
-            case '\\':
-                value = static_cast<unsigned char>(escape);
-                break;
+                // obscure GCC extensions
+                case '%':
+                case '(':
+                case '[':
+                case '{':
+                    // standard escape sequences
+                case '\'':
+                case '"':
+                case '?':
+                case '\\':
+                    value = static_cast<unsigned char>(escape);
+                    break;
 
-            case 'a':
-                value = static_cast<unsigned char>('\a');
-                break;
-            case 'b':
-                value = static_cast<unsigned char>('\b');
-                break;
-            case 'f':
-                value = static_cast<unsigned char>('\f');
-                break;
-            case 'n':
-                value = static_cast<unsigned char>('\n');
-                break;
-            case 'r':
-                value = static_cast<unsigned char>('\r');
-                break;
-            case 't':
-                value = static_cast<unsigned char>('\t');
-                break;
-            case 'v':
-                value = static_cast<unsigned char>('\v');
-                break;
+                case 'a':
+                    value = static_cast<unsigned char>('\a');
+                    break;
+                case 'b':
+                    value = static_cast<unsigned char>('\b');
+                    break;
+                case 'f':
+                    value = static_cast<unsigned char>('\f');
+                    break;
+                case 'n':
+                    value = static_cast<unsigned char>('\n');
+                    break;
+                case 'r':
+                    value = static_cast<unsigned char>('\r');
+                    break;
+                case 't':
+                    value = static_cast<unsigned char>('\t');
+                    break;
+                case 'v':
+                    value = static_cast<unsigned char>('\v');
+                    break;
 
-            // GCC extension for ESC character
-            case 'e':
-            case 'E':
-                value = static_cast<unsigned char>('\x1b');
-                break;
+                    // GCC extension for ESC character
+                case 'e':
+                case 'E':
+                    value = static_cast<unsigned char>('\x1b');
+                    break;
 
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-                // octal escape sequences consist of 1 to 3 digits
-                value = stringToULLbounded(str, --pos, 8, 1, 3);
-                break;
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                    // octal escape sequences consist of 1 to 3 digits
+                    value = stringToULLbounded(str, --pos, 8, 1, 3);
+                    break;
 
-            case 'x':
-                // hexadecimal escape sequences consist of at least 1 digit
-                value = stringToULLbounded(str, pos, 16);
-                break;
+                case 'x':
+                    // hexadecimal escape sequences consist of at least 1 digit
+                    value = stringToULLbounded(str, pos, 16);
+                    break;
 
-            case 'u':
-            case 'U': {
-                // universal character names have exactly 4 or 8 digits
-                std::size_t ndigits = (escape == 'u' ? 4 : 8);
-                value = stringToULLbounded(str, pos, 16, ndigits, ndigits);
+                case 'u':
+                case 'U': {
+                    // universal character names have exactly 4 or 8 digits
+                    std::size_t ndigits = (escape == 'u' ? 4 : 8);
+                    value = stringToULLbounded(str, pos, 16, ndigits, ndigits);
 
-                // UTF-8 encodes code points above 0x7f in multiple code units
-                // code points above 0x10ffff are not allowed
-                if (((narrow || utf8) && value > 0x7f) || (utf16 && value > 0xffff) || value > 0x10ffff)
-                    throw std::runtime_error("code point too large");
+                    // UTF-8 encodes code points above 0x7f in multiple code units
+                    // code points above 0x10ffff are not allowed
+                    if (((narrow || utf8) && value > 0x7f) || (utf16 && value > 0xffff) || value > 0x10ffff)
+                        throw std::runtime_error("code point too large");
 
-                if (value >= 0xd800 && value <= 0xdfff)
-                    throw std::runtime_error("surrogate code points not allowed in universal character names");
+                    if (value >= 0xd800 && value <= 0xdfff)
+                        throw std::runtime_error("surrogate code points not allowed in universal character names");
 
-                break;
-            }
+                    break;
+                }
 
-            default:
-                throw std::runtime_error("invalid escape sequence");
+                default:
+                    throw std::runtime_error("invalid escape sequence");
             }
         } else {
             value = static_cast<unsigned char>(str[pos++]);
@@ -2759,7 +2763,8 @@ static std::string openHeader(std::ifstream &f, const std::string &path)
         return "";
     }
 #else
-    f.open(path.c_str());
+    std::string simplePath = simplecpp::simplifyPath(path);
+    f.open(simplePath.c_str());
     return f.is_open() ? simplecpp::simplifyPath(path) : "";
 #endif
 }

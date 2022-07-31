@@ -2282,6 +2282,16 @@ static bool isAbsolutePath(const std::string &path)
 #endif
 
 namespace simplecpp {
+    std::string simplifyHeaderPath(std::string path)
+    {
+        if (path.empty())
+            return path;
+
+        while (path[0] == '/') {
+            path.erase(0,1);
+        }
+        return path;
+    }
     /**
      * perform path simplifications for . and ..
      */
@@ -2289,10 +2299,6 @@ namespace simplecpp {
     {
         if (path.empty())
             return path;
-        //remvoe the leading "/"
-        while (path[0] == '/') {
-            path.erase(0,1);
-        }
 
         std::string::size_type pos;
 
@@ -2900,7 +2906,7 @@ std::map<std::string, simplecpp::TokenList*> simplecpp::load(const simplecpp::To
             continue;
 
         bool systemheader = (htok->str()[0] == '<');
-        const std::string header(realFilename(htok->str().substr(1U, htok->str().size() - 2U)));
+        const std::string header(simplifyHeaderPath(realFilename(htok->str().substr(1U, htok->str().size() - 2U))));
         if (hasFile(ret, sourcefile, header, dui, systemheader))
             continue;
 
@@ -3164,7 +3170,7 @@ void simplecpp::preprocess(simplecpp::TokenList &output, const simplecpp::TokenL
                 const Token *inctok = inc2.cfront();
 
                 const bool systemheader = (inctok->op == '<');
-                const std::string header(realFilename(inctok->str().substr(1U, inctok->str().size() - 2U)));
+                const std::string header(simplifyHeaderPath(realFilename(inctok->str().substr(1U, inctok->str().size() - 2U))));
                 std::string header2 = getFileName(filedata, rawtok->location.file(), header, dui, systemheader);
                 if (header2.empty()) {
                     // try to load file..
@@ -3265,7 +3271,7 @@ void simplecpp::preprocess(simplecpp::TokenList &output, const simplecpp::TokenL
                             if (tok) {
                                 const std::string &sourcefile = rawtok->location.file();
                                 const bool systemheader = (tok->str()[0] == '<');
-                                const std::string header(realFilename(tok->str().substr(1U, tok->str().size() - 2U)));
+                                const std::string header(simplifyHeaderPath(realFilename(tok->str().substr(1U, tok->str().size() - 2U))));
                                 std::ifstream f;
                                 const std::string header2 = openHeader(f,dui,sourcefile,header,systemheader);
                                 expr.push_back(new Token(header2.empty() ? "0" : "1", tok->location));
